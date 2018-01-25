@@ -1475,7 +1475,7 @@ abstract class FOGBase
     public static function aesencrypt(
         $data,
         $key = false,
-        $enctype = AES-256-CBC
+        $enctype = 'aes-256-cbc'
     ) {
         $iv_size = openssl_cipher_iv_length($enctype);
         if (!$key) {
@@ -1485,7 +1485,13 @@ abstract class FOGBase
             $key = self::hex2bin($key);
         }
         $iv = openssl_random_pseudo_bytes($iv_size);
-        $cipher = openssl_encrypt($data, $enctype, $key, 0, $iv);
+        $cipher = openssl_encrypt(
+            $data,
+            $enctype,
+            $key,
+            OPENSSL_RAW_DATA,
+            $iv
+        );
         $iv = bin2hex($iv);
         $cipher = bin2hex($cipher);
         $key = bin2hex($key);
@@ -1508,7 +1514,7 @@ abstract class FOGBase
     public static function aesdecrypt(
         $encdata,
         $key = false,
-        $enctype = AES-256-CBC
+        $enctype = 'aes-256-cbc'
     ) {
         $iv_size = openssl_cipher_iv_length($enctype);
         if (false === strpos($encdata, '|')) {
@@ -1523,7 +1529,13 @@ abstract class FOGBase
         if (empty($key)) {
             return '';
         }
-        $decipher = openssl_decrypt($encoded, $enctype, $key, 0, $iv);
+        $decipher = openssl_decrypt(
+            $encoded,
+            $enctype,
+            $key,
+            OPENSSL_RAW_DATA,
+            $iv
+        );
 
         return trim($decipher);
     }
