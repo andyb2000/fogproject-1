@@ -1480,7 +1480,7 @@ abstract class FOGBase
         $iv_size = openssl_cipher_iv_length($enctype);
         if (!$key) {
             $addKey = true;
-            $key = openssl_random_pseudo_bytes($iv_size);
+            $key = openssl_random_pseudo_bytes($iv_size*2);
         } else {
             $key = self::hex2bin($key);
         }
@@ -1521,10 +1521,10 @@ abstract class FOGBase
             return $encdata;
         }
         $data = explode('|', $encdata);
-        $iv = pack('H*', $data[0]);
-        $encoded = pack('H*', $data[1]);
+        $iv = self::hex2bin($data[0]);
+        $encoded = self::hex2bin($data[1]);
         if (!$key && $data[2]) {
-            $key = pack('H*', $data[2]);
+            $key = self::hex2bin($data[2]);
         }
         if (empty($key)) {
             return '';
