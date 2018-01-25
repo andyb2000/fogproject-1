@@ -67,11 +67,11 @@ $AESDecryptionResponse1 = function (
 ) {
     $data = "#!ok\n#data=$data";
     $cipher = bin2hex(
-        mcrypt_encrypt(
-            MCRYPT_RIJNDAEL_128,
-            $key,
+        openssl_encrypt(
             $data,
-            MCRYPT_MODE_CBC,
+            AES-256-CBC,
+            $key,
+            0,
             $iv
         )
     );
@@ -90,11 +90,11 @@ $AESDecryptionResponse2 = function (
 ) {
     $data = "#!ok\n#data=$data";
     $cipher = bin2hex(
-        mcrypt_encrypt(
-            MCRYPT_RIJNDAEL_128,
-            $key,
+        openssl_encrypt(
             $data,
-            MCRYPT_MODE_CBC,
+            AES-256-CBC,
+            $key,
+            0,
             $iv
         )
     );
@@ -112,11 +112,11 @@ $AESDecryption = function (
     $data
 ) {
     $cipher = bin2hex(
-        mcrypt_encrypt(
-            MCRYPT_RIJNDAEL_128,
-            $key,
+        openssl_encrypt(
             $data,
-            MCRYPT_MODE_CBC,
+            AES-256-CBC,
+            $key,
+            0,
             $iv
         )
     );
@@ -149,14 +149,8 @@ switch ($unit) {
 case 'AESDecryption':
 case 'AESDecryptionResponse1':
 case 'AESDecryptionResponse2':
-    $iv_size = mcrypt_get_iv_size(
-        MCRYPT_RIJNDAEL_128,
-        MCRYPT_MODE_CBC
-    );
-    $iv = mcrypt_create_iv(
-        $iv_size,
-        MCRYPT_DEV_URANDOM
-    );
+    $iv_size = openssl_cipher_iv_length(AES-256-CBC);
+    $iv = openssl_random_pseudo_bytes($iv_size);
     $key = $_REQUEST['key'];
     $n = strlen($key);
     $i = 0;
