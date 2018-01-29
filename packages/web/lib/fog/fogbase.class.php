@@ -1480,16 +1480,20 @@ abstract class FOGBase
         $iv_size = openssl_cipher_iv_length($enctype);
         if (!$key) {
             $addKey = true;
-            $key = openssl_random_pseudo_bytes($iv_size*2);
+            $key = openssl_random_pseudo_bytes($iv_size, $cstrong);
         } else {
             $key = self::hex2bin($key);
         }
-        $iv = openssl_random_pseudo_bytes($iv_size);
+        $iv = openssl_random_pseudo_bytes($iv_size, $cstrong);
+        // Pad the plaintext
+        if (strlen($data) % 8) {
+            $data = str_pad($data, strlen($data) + 8 - strlen($data) % 8, "\0");
+        }
         $cipher = openssl_encrypt(
             $data,
             $enctype,
             $key,
-            OPENSSL_RAW_DATA,
+            OPENSSL_RAW_DATA | OPENSSL_NO_PADDING,
             $iv
         );
         $iv = bin2hex($iv);
@@ -1533,7 +1537,7 @@ abstract class FOGBase
             $encoded,
             $enctype,
             $key,
-            OPENSSL_RAW_DATA,
+            OPENSSL_RAW_DATA | OPENSSL_NO_PADDING,
             $iv
         );
 
