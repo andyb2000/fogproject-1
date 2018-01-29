@@ -1481,6 +1481,14 @@ abstract class FOGBase
         if (!$key) {
             $addKey = true;
             $key = openssl_random_pseudo_bytes($iv_size, $cstrong);
+            if (!$cstrong) {
+                echo json_encode(
+                    array(
+                        'error' => _('Failed to create a secure key')
+                    )
+                );
+                exit;
+            }
         } else {
             $key = self::hex2bin($key);
         }
